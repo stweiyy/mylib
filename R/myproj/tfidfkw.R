@@ -1,0 +1,29 @@
+library(tm);
+dfm<-read.table("articles.txt",header=FALSE,col.names=c("id","content"),stringsAsFactors=FALSE)
+#filter the empty document and those has less than 10 words
+dfm<-dfm[nchar(dfm$content)>10,]
+dfm$wordslist<-strsplit(dfm$content,",")
+corpus<-Corpus(VectorSource(dfm$wordslist))
+meta(corpus,"MetaID")<-dfm$id
+dtm<-DocumentTermMatrix(corpus,control=list(wordLengths=c(2,Inf),weighting=function(x)weightTfIdf(x)))
+dtm<-removeSparseTerms(dtm,0.999)
+m<-as.matrix(dtm);
+rownames(m)<-meta(corpus)$MetaID
+selword<-function(x,maxword=30,weight=0.02){
+	words<-names(x)
+	sorted<-sort(x,decreasing=TRUE)
+	wordcount<-length(x[x>=weight])
+	maxword<-min(maxword,wordcount)
+	sel<-sorted[1:maxword]
+	wordslist<-paste(names(sel),collapse=",")
+    #return(names(sel))
+    #return(sel)
+	return(wordslist)
+}
+filterdoc<-apply(m,1,selword)
+filterdoc<-as.data.frame(filterdoc)
+names(filterdoc)<-c("content")
+filterdoc$docid<-as.integer(rownames(filterdoc))
+filterdoc<-data.frame(filterdoc$docid,filterdoc$content)
+write.table(filterdoc,"tfidf_kw.txt",sep="\t",row.names=FALSE,col.names=FALSE)
+q();
