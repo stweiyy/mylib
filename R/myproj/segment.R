@@ -13,7 +13,7 @@ ch <- dbConnect(jdbcDriver, paste("jdbc:sap:", host, ":", port, sep=""), uid, pw
 
 print(paste("fetching data: ",Sys.time(),"...."))
 #step(1): fetch data from database
-textinfo <- dbGetQuery(ch, "select ID,CONTENT from WHISLY.ARTICLES")
+textinfo <- dbGetQuery(ch, "select ID,CONTENT from WHISLY.ARTICLES limit 100")
 dbDisconnect(ch)
 ###################################################################################
 #step(2):preproccessing ,remove numbers,word segmentation then remove stop words
@@ -33,5 +33,5 @@ print(paste("preproccessing data: ",Sys.time(),"...."))
 textinfo$CONTENT<-lapply(textinfo$CONTENT,wordsegment)
 textinfo$strvalue<-lapply(textinfo$CONTENT,paste,collapse=",")
 dfm<-data.frame(unlist(textinfo$ID),unlist(textinfo$strvalue))
-write.table(dfm,"articles.txt",row.names=FALSE,col.names=FALSE)
+write.table(dfm,"articles_tmp.txt",row.names=FALSE,col.names=FALSE)
 print(paste("finished: ",Sys.time(),"...."))
