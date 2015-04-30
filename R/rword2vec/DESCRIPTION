@@ -1,0 +1,10 @@
+Package: rword2vec
+License: Apache License (== 2.0)
+Type: Package
+Title: R package for word2vec
+Version: 1.0
+Date: 2015-04-30
+Depends: R (>= 2.14.0)
+Author: whisly <stweiyy@163.com>
+Maintainer: Whisly Wei <stweiyy@163.com>
+Description: This is an extending package for Google's word2vec algorithm.
